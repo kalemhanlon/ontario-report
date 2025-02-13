@@ -117,3 +117,30 @@ sample_and_taxon |>
   geom_point() + 
   #add a statistical model
   geom_smooth()
+
+taxon_clean_goodSept_long <- taxon_clean_good_sept |> 
+  pivot_longer(cols = Proteobacteria:Cyanobacteria, 
+               names_to = "Phylum", 
+               values_to = "Abundance")
+
+#sample_taxon_long <- taxon_clean_goodSept_long |> 
+  #inner_join(sample_and_taxon, by = "sample_id")
+
+sample_taxon_long <- sample_and_taxon |> 
+pivot_longer(cols = Proteobacteria:Cyanobacteria, 
+             names_to = "Phylum", 
+             values_to = "Abundance")
+
+sample_taxon_long |> 
+  select(Phylum, Abundance, env_group) |> 
+  filter(Phylum %in% c("Bacteroidota", "Chloroflexi", "Cyanobacteria")) |> 
+  ggplot(aes(x = env_group, y = Abundance, fill = env_group, colour = env_group, alpha = 0.5, legend = F)) +
+  labs(title = "Phylum Abundance Changes by Depth and Season", x = "Depth and Season", y = "Phylum Abundance") +
+  geom_boxplot() +
+  geom_point() +
+  geom_jitter() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
+  theme(legend.position = "none") +
+  facet_grid(~Phylum) 
+
+ggsave("phylum_abundance_by_season_and_depth.png")

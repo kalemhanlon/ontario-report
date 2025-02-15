@@ -131,6 +131,11 @@ pivot_longer(cols = Proteobacteria:Cyanobacteria,
              names_to = "Phylum", 
              values_to = "Abundance")
 
+# for statistical test in the graph
+library(ggpubr)
+
+my_comparison <- list(c("Deep", "Shallow_May"), c("Deep", "Shallow_September"), c("Shallow_May", "Shallow_September"))
+
 sample_taxon_long |> 
   select(Phylum, Abundance, env_group) |> 
   filter(Phylum %in% c("Bacteroidota", "Chloroflexi", "Cyanobacteria")) |> 
@@ -141,6 +146,11 @@ sample_taxon_long |>
   geom_jitter() +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
   theme(legend.position = "none") +
-  facet_grid(~Phylum) 
+  facet_grid(~Phylum) +
+  stat_compare_means(comparisons = my_comparison) +
+  stat_compare_means(label.y = 0.7)
 
-ggsave("phylum_abundance_by_season_and_depth.png")
+ggsave(path = "figures", filename = "phylum_abundance_by_season_and_depth.png")
+
+
+

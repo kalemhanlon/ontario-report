@@ -53,7 +53,7 @@ n_samples <-
   #number of distinct names in the column
   n_distinct()
   
-#calculate the minimun and max temps
+#calculate the minimum and max temps
 #min
 min_temp <- sample_and_taxon |> 
   summarise(round(min(temperature), digits = 2)) |> 

@@ -1,0 +1,67 @@
+---
+title: "A Report on Lake Ontario's Microbes"
+author: "Kalem Hanlon"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# make document environment
+```{r packages}
+#put our code here
+# load packages
+library(tidyverse)
+```
+
+# load in the Lake Ontario data
+```{r load data}
+#load in lake ontario microbial community data
+sample_and_taxon <- 
+  read_csv("data/sample_and_taxon.csv")
+
+# inspect the data
+glimpse(sample_and_taxon)
+```
+
+#Microbial Cell Abundance Versus Temperature
+
+```{r cells_vs_temp}
+ggplot(data = sample_and_taxon, aes(x = temperature, y = cells_per_ml/1000000)) +
+  labs(x = "Temperature (C)", y = "Cell Abundance (Millions)", title = "Microbial Cell Abundance in Lake Ontario by Temperature") +
+  geom_point(aes(colour = env_group)) +
+  theme_classic() +
+  theme(legend.position = "bottom", legend.title = element_blank()) +
+  geom_smooth(method = "lm", colour = "black")
+```
+
+## Cell abundance
+
+The cell abundance tends to increase with the temperature. There appears to be a break in the data where there was no sampling between May and September.
+- Deep samples are the coldest and have the fewest abundance of cells
+
+```{r data summary, echo = FALSE}
+#how many samples do I have
+n_samples <- 
+  sample_and_taxon |>
+  #only pick out sample ID column
+  select(sample_id) |> 
+  #number of distinct names in the column
+  n_distinct()
+  
+#calculate the minimun and max temps
+#min
+min_temp <- sample_and_taxon |> 
+  summarise(round(min(temperature), digits = 2)) |> 
+  pull()
+#max
+max_temp <- sample_and_taxon |> 
+  summarise(round(max(temperature), digits = 2)) |> 
+  pull()
+```
+
+The total number of samples is `r n_samples`. For this set of samples, temperature ranges from a minimum of `r min_temp`, and a maximum of `r max_temp` celsius.
